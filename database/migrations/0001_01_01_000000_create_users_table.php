@@ -14,9 +14,13 @@ return new class extends Migration
         Schema::create('users', function (Blueprint $table) {
             $table->id();
             $table->string('name');
+            $table->string('username')->unique(); // Identificativo unico per il social (es: @daniele_dev)
             $table->string('email')->unique();
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password');
+            $table->string('avatar')->nullable(); // Percorso della foto profilo
+            $table->text('bio')->nullable();      // Descrizione dell'utente
+            $table->boolean('is_admin')->default(false); // Permessi speciali
             $table->rememberToken();
             $table->timestamps();
         });
