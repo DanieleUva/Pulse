@@ -2,18 +2,48 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Attributes\Fillable;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
-// Permettiamo a Laravel di salvare il testo del post e l'ID dell'utente
-#[Fillable(['body', 'user_id'])]
 class Post extends Model
 {
+    use HasFactory;
+
+    protected $fillable = ['body', 'image', 'user_id'];
+
     /**
-     * Relazione Inversa: Ogni post appartiene a un utente.
+     * Relazione con l'utente che ha creato il post
      */
-    public function user()
+    public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
+    }
+
+    /**
+     * Relazione con i like ricevuti dal post
+     */
+    public function likes(): HasMany
+    {
+        return $this->hasMany(Like::class);
+    }
+
+    /**
+     * Verifica se un determinato utente ha messo like a questo post
+     */
+    public function isLikedBy(?User $user): bool
+    {
+        if (!$user) {
+            return false;
+        }
+
+        
+        return $this->likes()->where('user_id', $user->id)->exists();
+    }
+
+        public function comments()
+    {
+        return $this->hasMany(Comment::class)->latest();
     }
 }
