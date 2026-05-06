@@ -50,4 +50,16 @@ class UserController extends Controller
 
         return redirect()->route('users.show', $user)->with('success', 'Profilo aggiornato!');
     }
+
+    public function toggleFollow(User $user) {
+    $me = auth()->user();
+
+    if ($me->isFollowing($user)) {
+        $me->following()->detach($user->id);
+    } else {
+        $me->following()->attach($user->id);
+    }
+
+    return back();
+    }
 }

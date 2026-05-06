@@ -12,6 +12,40 @@
                 </a>
             </div>
 
+            <!-- Barra di Ricerca Centrale -->
+            <div class="hidden md:flex flex-1 max-w-md mx-8">
+                <form action="/search" method="GET" class="w-full relative group">
+                    <input type="text" name="query" placeholder="Cerca persone o post..." 
+                        class="w-full bg-slate-900 border border-slate-800 text-slate-300 rounded-2xl px-5 py-2 pl-11 focus:ring-2 focus:ring-indigo-500 focus:bg-slate-800 outline-none transition-all placeholder:text-slate-500">
+                    <div class="absolute left-4 top-1/2 -translate-y-1/2 text-slate-500 group-focus-within:text-indigo-400 transition">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                        </svg>
+                    </div>
+                </form>
+            </div>
+
+            @auth
+    @php
+        $unreadGlobal = \App\Models\Message::where('receiver_id', auth()->id())->where('is_read', false)->count();
+    @endphp
+
+    <a href="{{ route('chat.index') }}" class="relative p-2 text-slate-600 hover:text-indigo-600 transition">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-7 w-7" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M8 10h.01M12 10h.01M16 10h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
+        </svg>
+        
+        @if($unreadGlobal > 0)
+            <span class="absolute top-1 right-1 flex h-4 w-4">
+                <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-rose-400 opacity-75"></span>
+                <span class="relative inline-flex rounded-full h-4 w-4 bg-rose-500 text-[9px] text-white font-black items-center justify-center">
+                    {{ $unreadGlobal }}
+                </span>
+            </span>
+        @endif
+    </a>
+@endauth
+
             <!-- Menu Destro -->
             <div class="flex items-center space-x-5">
                 @auth

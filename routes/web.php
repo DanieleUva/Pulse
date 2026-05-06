@@ -7,6 +7,8 @@ use App\Models\Post; // Serve per leggere i post dal DB
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\CommentController;
 use App\Http\Controllers\UserController;
+use App\Http\Controllers\SearchController;
+use App\Http\Controllers\ChatController;
 
 // 1. La Home: deve recuperare i post come facevamo prima
 Route::get('/', [PostController::class, 'index'])->name('home');
@@ -35,11 +37,21 @@ Route::post('/posts/{post}/comments', [CommentController::class, 'store'])->name
 
 Route::delete('/comments/{comment}', [CommentController::class, 'destroy'])->name('comments.destroy');
 
-// La rotta usa {user:username} per cercare l'utente tramite il suo username invece che l'ID
-Route::get('/profilo/{user:username}', [UserController::class, 'show'])->name('users.show');
-
 // Pagina con il form per modificare il profilo
 Route::get('/profilo/{user:username}/edit', [UserController::class, 'edit'])->name('users.edit')->middleware('auth');
 
 // Azione che salva i dati nel database
 Route::put('/profilo/{user:username}', [UserController::class, 'update'])->name('users.update')->middleware('auth');
+
+// La rotta usa {user:username} per cercare l'utente tramite il suo username invece che l'ID
+Route::get('/profilo/{user:username}', [UserController::class, 'show'])->name('users.show');
+
+Route::get('/search', [SearchController::class, 'index'])->name('search');
+
+Route::post('/user/{user}/follow', [UserController::class, 'toggleFollow'])->name('user.follow')->middleware('auth');
+
+Route::get('/chat/{user:username}', [ChatController::class, 'show'])->name('chat.show');
+
+Route::post('/chat/{user:username}', [ChatController::class, 'store'])->name('chat.store');
+
+Route::get('/messaggi', [ChatController::class, 'index'])->name('chat.index');

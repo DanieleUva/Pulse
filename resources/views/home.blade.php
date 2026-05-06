@@ -29,11 +29,11 @@
         </div>
 
         <!-- Box Creazione Post -->
+       <!-- Box Creazione Post -->
+        @auth
         <div class="bg-white/80 backdrop-blur-md p-6 rounded-[2.5rem] shadow-[0_20px_50px_rgba(0,0,0,0.05)] mb-10 border border-white">
             <div class="flex items-start space-x-4">
-                @auth
-                    <img src="{{ auth()->user()->getAvatarUrl() }}" class="w-12 h-12 rounded-2xl object-cover shadow-lg border-2 border-white">
-                @endauth
+                <img src="{{ auth()->user()->getAvatarUrl() }}" class="w-12 h-12 rounded-2xl object-cover shadow-lg border-2 border-white">
                 
                 <form action="/post" method="POST" enctype="multipart/form-data" class="flex-1">
                     @csrf
@@ -43,22 +43,42 @@
                         placeholder="A cosa stai pensando, {{ auth()->user()->name }}?" 
                         required></textarea>
                     
-                    <div class="flex flex-col sm:flex-row justify-between items-center mt-4 gap-4">
-                        <label class="flex items-center space-x-2 cursor-pointer group bg-white px-4 py-2 rounded-xl shadow-sm border border-slate-100 hover:bg-indigo-50 transition">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-indigo-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                            </svg>
-                            <span class="text-sm font-bold text-slate-600">Aggiungi Foto</span>
-                            <input type="file" name="image" accept="image/*" class="hidden">
+                    <div class="flex items-center justify-between mt-4">
+                        <!-- Tasto Immagine Minimal -->
+                        <label class="group flex items-center space-x-2 cursor-pointer outline-none">
+                            <div class="p-3 bg-indigo-50 text-indigo-600 rounded-2xl group-hover:bg-indigo-600 group-hover:text-white transition-all duration-300">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                                </svg>
+                            </div>
+                            <span class="text-sm font-black text-slate-400 group-hover:text-indigo-600 transition tracking-tight">Aggiungi foto</span>
+                            <input type="file" name="image" accept="image/*" class="hidden" onchange="updateFileName(this)">
                         </label>
 
-                        <button type="submit" class="bg-indigo-600 text-white px-10 py-3 rounded-2xl font-black hover:bg-indigo-700 transition transform hover:scale-105 active:scale-95 shadow-xl shadow-indigo-200 w-full sm:w-auto">
+                        <!-- Status File (Appare quando selezioni una foto) -->
+                        <div id="file-chosen" class="hidden text-xs font-bold text-emerald-500 bg-emerald-50 px-3 py-1 rounded-full animate-bounce">
+                            Foto pronta! ✨
+                        </div>
+
+                        <button type="submit" class="bg-slate-900 text-white px-8 py-3 rounded-2xl font-black text-sm uppercase tracking-widest hover:bg-indigo-600 transition-all shadow-lg shadow-slate-200 active:scale-95">
                             Pubblica
                         </button>
                     </div>
                 </form>
             </div>
         </div>
+
+        <script>
+            function updateFileName(input) {
+                const status = document.getElementById('file-chosen');
+                if (input.files && input.files[0]) {
+                    status.classList.remove('hidden');
+                } else {
+                    status.classList.add('hidden');
+                }
+            }
+        </script>
+        @endauth
 
         <!-- Sezione Feed -->
         <div class="flex items-center space-x-4 mb-8 px-2">
