@@ -13,8 +13,8 @@ use App\Http\Controllers\ChatController;
 // 1. La Home: deve recuperare i post come facevamo prima
 Route::get('/', [PostController::class, 'index'])->name('home');
 
-// 2. La rotta per salvare i post
-Route::post('/post', [PostController::class, 'store']);
+// 2. La rotta per salvare i post (AGGIUNTO IL NOME)
+Route::post('/post', [PostController::class, 'store'])->name('post.store');
 
 // 3. Le rotte di Breeze (Dashboard e Profilo)
 Route::get('/dashboard', function () {
@@ -55,3 +55,5 @@ Route::get('/chat/{user:username}', [ChatController::class, 'show'])->name('chat
 Route::post('/chat/{user:username}', [ChatController::class, 'store'])->name('chat.store');
 
 Route::get('/messaggi', [ChatController::class, 'index'])->name('chat.index');
+
+Route::get('/esplora', [UserController::class, 'index'])->name('explore')->middleware('auth');
