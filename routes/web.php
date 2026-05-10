@@ -57,3 +57,11 @@ Route::post('/chat/{user:username}', [ChatController::class, 'store'])->name('ch
 Route::get('/messaggi', [ChatController::class, 'index'])->name('chat.index');
 
 Route::get('/esplora', [UserController::class, 'index'])->name('explore')->middleware('auth');
+
+Route::get('/notifications', [App\Http\Controllers\UserController::class, 'notifications'])->name('notifications.index');
+
+Route::get('/users/{user:username}/followers', [UserController::class, 'followers'])->name('users.followers');
+Route::get('/users/{user:username}/following', [UserController::class, 'following'])->name('users.following');
+
+Route::get('/post/{post}', [PostController::class, 'show'])->name('post.show');
+

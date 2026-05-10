@@ -23,23 +23,24 @@ class RegisteredUserController extends Controller
         return view('auth.register');
     }
 
-    /**
+  /**
      * Handle an incoming registration request.
      *
-     * @throws ValidationException
+     * @throws \Illuminate\Validation\ValidationException
      */
     public function store(Request $request): RedirectResponse
     {
         $request->validate([
             'name' => ['required', 'string', 'max:255'],
-            'username' => ['required', 'string', 'max:255', 'unique:'.User::class], // Aggiunto!
+            // Validazione dello username: unico nel database
+            'username' => ['required', 'string', 'lowercase', 'max:255', 'unique:'.User::class, 'alpha_dash'],
             'email' => ['required', 'string', 'lowercase', 'email', 'max:255', 'unique:'.User::class],
             'password' => ['required', 'confirmed', Rules\Password::defaults()],
         ]);
 
         $user = User::create([
             'name' => $request->name,
-            'username' => $request->username, // Aggiunto!
+            'username' => $request->username,
             'email' => $request->email,
             'password' => Hash::make($request->password),
         ]);
@@ -48,6 +49,9 @@ class RegisteredUserController extends Controller
 
         Auth::login($user);
 
-        return redirect(route('dashboard', absolute: false));
+        // MODIFICATO: Reindirizza alla home (/) invece che /dashboard
+        // Se la tua rotta '/' ha un nome (es. 'home'), usa route('home')
+        // Altrimenti usa semplicemente redirect('/')
+        return redirect('/')->with('success', 'Benvenuto su Pulse!');
     }
 }

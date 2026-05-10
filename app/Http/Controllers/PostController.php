@@ -53,4 +53,12 @@ class PostController extends Controller
 
         return back()->with('success', 'Post eliminato con successo!');
     }
+
+    public function show(Post $post)
+    {
+    // Carica il post insieme ai commenti e agli utenti che li hanno scritti
+    $post->load(['comments.user', 'user']);
+    
+    return view('posts.show', compact('post'));
+    }
 }

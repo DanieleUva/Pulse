@@ -35,13 +35,15 @@ class User extends Authenticatable
     /**
      * Helper per ottenere l'URL dell'avatar o un'immagine di default
      */
-    public function getAvatarUrl()
+   public function getAvatarUrl()
     {
-        return $this->avatar 
-            ? Storage::url($this->avatar) 
-            : 'https://ui-avatars.com/api/?name=' . urlencode($this->name) . '&color=7F9CF5&background=EBF4FF';
+    if ($this->avatar) {
+        // asset() si assicura che l'URL includa http://localhost:8000 o il tuo dominio futuro
+        return asset('storage/' . $this->avatar);
     }
 
+    return 'https://ui-avatars.com/api/?name=' . urlencode($this->name) . '&color=7F9CF5&background=EBF4FF';
+    }
     /**
      * Relazione: Un utente può avere molti post.
      */

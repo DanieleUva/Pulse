@@ -35,7 +35,7 @@
                         $unreadGlobal = \App\Models\Message::where('receiver_id', auth()->id())->where('is_read', false)->count();
                     @endphp
 
-                    <div class="relative p-2 text-slate-400 hover:text-indigo-400 transition cursor-pointer group">
+                    <a href="{{ route('notifications.index') }}" class="relative p-2 text-slate-400 hover:text-indigo-400 transition cursor-pointer group">
                         <svg xmlns="http://www.w3.org/2000/svg" class="h-7 w-7 group-hover:rotate-12 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" />
                         </svg>
@@ -44,7 +44,7 @@
                                 {{ $unreadNotifications }}
                             </span>
                         @endif
-                    </div>
+                    </a>
 
                     <a href="{{ route('chat.index') }}" class="relative p-2 text-slate-400 hover:text-indigo-400 transition">
                         <svg xmlns="http://www.w3.org/2000/svg" class="h-7 w-7" fill="none" viewBox="0 0 24 24" stroke="currentColor">

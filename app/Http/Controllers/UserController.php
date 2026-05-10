@@ -89,4 +89,28 @@ class UserController extends Controller
 
     return view('users.explore', compact('users'));
 }
+
+public function notifications()
+{
+    $notifications = auth()->user()->notifications()->paginate(10);
+    
+    // Segna tutte le notifiche come lette quando l'utente visita la pagina
+    auth()->user()->unreadNotifications->markAsRead();
+
+    return view('users.notifications', compact('notifications'));
+}
+
+public function followers(User $user)
+{
+    $users = $user->followers()->paginate(20); // Recupera chi segue l'utente
+    $title = "Follower di " . $user->name;
+    return view('users.user-list', compact('users', 'title'));
+}
+
+public function following(User $user)
+{
+    $users = $user->following()->paginate(20); // Recupera chi l'utente segue
+    $title = "Persone seguite da " . $user->name;
+    return view('users.user-list', compact('users', 'title'));
+}
 }

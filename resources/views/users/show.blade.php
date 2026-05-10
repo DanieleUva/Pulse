@@ -31,9 +31,11 @@
     <script>
         setTimeout(() => {
             const toast = document.getElementById('toast');
-            toast.style.transition = 'opacity 0.5s ease';
-            toast.style.opacity = '0';
-            setTimeout(() => toast.remove(), 500);
+            if(toast) {
+                toast.style.transition = 'opacity 0.5s ease';
+                toast.style.opacity = '0';
+                setTimeout(() => toast.remove(), 500);
+            }
         }, 3000);
     </script>
     @endif
@@ -54,31 +56,31 @@
                         <h1 class="text-4xl font-black text-slate-900 tracking-tight">{{ $user->name }}</h1>
                         <p class="text-indigo-600 font-bold text-lg">@ {{ $user->username }}</p>
 
-                    @if($user->bio)
-                        <p class="mt-4 text-slate-600 leading-relaxed max-w-md">
-                            {{ $user->bio }}
-                        </p>
-                    @endif
+                        @if($user->bio)
+                            <p class="mt-4 text-slate-600 leading-relaxed max-w-md">{{ $user->bio }}</p>
+                        @endif
 
-                    @if($user->location)
-                        <div class="flex items-center mt-3 text-slate-400 text-xs font-bold uppercase tracking-widest">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1.5 text-indigo-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
-                            </svg>
-                            {{ $user->location }}
-                        </div>
-                    @endif
+                        @if($user->location)
+                            <div class="flex items-center mt-3 text-slate-400 text-xs font-bold uppercase tracking-widest">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1.5 text-indigo-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+                                </svg>
+                                {{ $user->location }}
+                            </div>
+                        @endif
                         
                         <div class="flex items-center justify-center md:justify-start space-x-6 mt-4">
-                            <div class="text-center">
-                                <p class="text-xl font-black text-slate-900 leading-none">{{ $user->followers()->count() }}</p>
+                            <a href="{{ route('users.followers', $user->username) }}" class="text-center group block transition active:scale-95">
+                                <p class="text-xl font-black text-slate-900 leading-none group-hover:text-indigo-600 transition-colors">{{ $user->followers()->count() }}</p>
                                 <p class="text-xs font-bold text-slate-400 uppercase tracking-widest mt-1">Followers</p>
-                            </div>
-                            <div class="text-center border-x border-slate-100 px-6">
-                                <p class="text-xl font-black text-slate-900 leading-none">{{ $user->following()->count() }}</p>
+                            </a>
+                            
+                            <a href="{{ route('users.following', $user->username) }}" class="text-center border-x border-slate-100 px-6 group block transition active:scale-95">
+                                <p class="text-xl font-black text-slate-900 leading-none group-hover:text-indigo-600 transition-colors">{{ $user->following()->count() }}</p>
                                 <p class="text-xs font-bold text-slate-400 uppercase tracking-widest mt-1">Seguiti</p>
-                            </div>
+                            </a>
+                            
                             <div class="text-center">
                                 <p class="text-xl font-black text-slate-900 leading-none">{{ $user->posts()->count() }}</p>
                                 <p class="text-xs font-bold text-slate-400 uppercase tracking-widest mt-1">Post</p>
@@ -167,10 +169,10 @@
                             </div>
                         </div>
 
-                        <div class="px-8 py-4 bg-slate-50/50 border-t border-white flex items-center space-x-6">
+                   <div class="px-8 py-4 bg-slate-50/50 border-t border-white flex items-center space-x-6">
                             <form action="{{ route('post.like', $post) }}" method="POST">
                                 @csrf
-                                <button class="flex items-center space-x-2 group {{ auth()->user() && $post->isLikedBy(auth()->user()) ? 'text-red-500' : 'text-slate-400 hover:text-red-500' }} transition">
+                                <button type="submit" class="flex items-center space-x-2 group {{ auth()->user() && $post->isLikedBy(auth()->user()) ? 'text-red-500' : 'text-slate-400 hover:text-red-500' }} transition">
                                     <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 transform group-active:scale-125 transition" fill="{{ auth()->user() && $post->isLikedBy(auth()->user()) ? 'currentColor' : 'none' }}" viewBox="0 0 24 24" stroke="currentColor">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
                                     </svg>
@@ -186,28 +188,51 @@
                             </div>
 
                             @auth
-                            @if(auth()->id() === $user->id)
-                                <form action="{{ route('post.destroy', $post) }}" method="POST" onsubmit="return confirm('Sei sicuro di voler eliminare questo post?');" class="ml-auto">
-                                    @csrf
-                                    @method('DELETE')
-                                    <button type="submit" class="p-2 text-slate-300 hover:text-red-500 transition-colors group">
-                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 group-hover:scale-110 transition" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-                                        </svg>
-                                    </button>
-                                </form>
-                            @endif
+                                @if(auth()->id() === $user->id)
+                                    <form action="{{ route('post.destroy', $post) }}" method="POST" onsubmit="return confirm('Sei sicuro?');" class="ml-auto">
+                                        @csrf
+                                        @method('DELETE')
+                                        <button type="submit" class="p-2 text-slate-300 hover:text-red-500 transition-colors group">
+                                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 group-hover:scale-110 transition" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                                            </svg>
+                                        </button>
+                                    </form>
+                                @endif
                             @endauth
                         </div>
-                    </div>
-                @empty
+
+                        <div class="px-8 pb-4 space-y-3 bg-slate-50/30">
+                            @foreach($post->comments as $comment)
+                                <div class="flex items-start space-x-3 text-sm">
+                                    <img src="{{ $comment->user->getAvatarUrl() }}" class="w-6 h-6 rounded-lg object-cover mt-1">
+                                    <div class="bg-white p-3 rounded-2xl shadow-sm border border-slate-100 flex-1">
+                                        <p class="font-bold text-slate-900 text-xs">{{ $comment->user->name }}</p>
+                                        <p class="text-slate-600">{{ $comment->body }}</p>
+                                    </div>
+                                </div>
+                            @endforeach
+                        </div>
+
+                        @auth
+                        <div class="px-8 py-4 bg-white border-t border-slate-100">
+                            <form action="{{ route('comments.store', $post) }}" method="POST" class="flex gap-4">
+                                @csrf
+                                <input type="text" name="body" placeholder="Scrivi un commento..." 
+                                    class="flex-1 bg-slate-50 border border-slate-200 rounded-xl px-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500/20 transition" required>
+                                <button type="submit" class="bg-indigo-600 text-white px-4 py-2 rounded-xl text-xs font-black uppercase tracking-widest hover:bg-indigo-700 transition">
+                                    Invia
+                                </button>
+                            </form>
+                        </div>
+                        @endauth
+                    </div> @empty
                     <div class="text-center py-20 bg-slate-50/50 rounded-[3rem] border border-dashed border-slate-200">
-                        <p class="text-slate-400 font-medium italic text-lg">Nessun post ancora... un po' timido? 😶‍🌫️</p>
+                        <p class="text-slate-400 font-medium italic text-lg">Nessun post ancora... 😶‍🌫️</p>
                     </div>
                 @endforelse
             </div>
         </div>
     </div>
-
 </body>
 </html>

@@ -18,7 +18,7 @@ class UserFollowed extends Notification
 
     public function via($notifiable)
     {
-        return ['database']; // Salviamo la notifica nel DB
+        return ['database'];
     }
 
     public function toArray($notifiable)
@@ -26,6 +26,10 @@ class UserFollowed extends Notification
         return [
             'follower_id' => $this->follower->id,
             'follower_name' => $this->follower->name,
+            // --- AGGIUNGI QUESTE DUE RIGHE ---
+            'follower_username' => $this->follower->username, 
+            'follower_avatar' => $this->follower->getAvatarUrl(), 
+            // --------------------------------
             'message' => 'ha iniziato a seguirti!',
         ];
     }
