@@ -11,17 +11,14 @@ class PostController extends Controller
 {
  public function index()
 {
-    // 1. Carichiamo i post con le relazioni necessarie
     $posts = Post::with(['user', 'likes', 'comments.user'])->latest()->get();
+    
+    // Incrementiamo le views di tutti i post visualizzati in questa sessione
+    
+    Post::whereIn('id', $posts->pluck('id'))->increment('views_count');
 
-    // 2. Carichiamo i momenti (storie) attivi delle ultime 24 ore
-    // Usiamo lo scopeActive che abbiamo creato nel model Moment
-    $moments = \App\Models\Moment::active()
-                ->with('user')
-                ->latest()
-                ->get();
+    $moments = \App\Models\Moment::active()->with('user')->latest()->get();
 
-    // 3. Passiamo ENTRAMBE le variabili alla vista
     return view('home', compact('posts', 'moments'));
 }
 
