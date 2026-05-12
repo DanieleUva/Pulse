@@ -169,63 +169,81 @@
                             </div>
                         </div>
 
-                   <div class="px-8 py-4 bg-slate-50/50 border-t border-white flex items-center space-x-6">
-                            <form action="{{ route('post.like', $post) }}" method="POST">
-                                @csrf
-                                <button type="submit" class="flex items-center space-x-2 group {{ auth()->user() && $post->isLikedBy(auth()->user()) ? 'text-red-500' : 'text-slate-400 hover:text-red-500' }} transition">
-                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 transform group-active:scale-125 transition" fill="{{ auth()->user() && $post->isLikedBy(auth()->user()) ? 'currentColor' : 'none' }}" viewBox="0 0 24 24" stroke="currentColor">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
-                                    </svg>
-                                    <span class="font-black text-sm">{{ $post->likes()->count() }}</span>
-                                </button>
-                            </form>
+                   <div x-data="{ showComments: false }">
+                            <div class="px-8 py-4 bg-slate-50/50 border-t border-white flex items-center space-x-6">
+                                <form action="{{ route('post.like', $post) }}" method="POST">
+                                    @csrf
+                                    <button type="submit" class="flex items-center space-x-2 group {{ auth()->user() && $post->isLikedBy(auth()->user()) ? 'text-red-500' : 'text-slate-400 hover:text-red-500' }} transition">
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 transform group-active:scale-125 transition" fill="{{ auth()->user() && $post->isLikedBy(auth()->user()) ? 'currentColor' : 'none' }}" viewBox="0 0 24 24" stroke="currentColor">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
+                                        </svg>
+                                        <span class="font-black text-sm">{{ $post->likes()->count() }}</span>
+                                    </button>
+                                </form>
 
-                            <div class="flex items-center space-x-2 text-slate-400">
-                                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
-                                </svg>
-                                <span class="font-black text-sm">{{ $post->comments()->count() }}</span>
+                                <button @click="showComments = !showComments" class="flex items-center space-x-2 text-slate-400 hover:text-indigo-600 transition group">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 group-hover:scale-110 transition" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
+                                    </svg>
+                                    <span class="font-black text-sm">{{ $post->comments()->count() }}</span>
+                                </button>
+
+                                @auth
+                                    @if(auth()->id() === $user->id)
+                                        <form action="{{ route('post.destroy', $post) }}" method="POST" onsubmit="return confirm('Sei sicuro?');" class="ml-auto">
+                                            @csrf
+                                            @method('DELETE')
+                                            <button type="submit" class="p-2 text-slate-300 hover:text-red-500 transition-colors group">
+                                                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 group-hover:scale-110 transition" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                                                </svg>
+                                            </button>
+                                        </form>
+                                    @endif
+                                @endauth
                             </div>
 
-                            @auth
-                                @if(auth()->id() === $user->id)
-                                    <form action="{{ route('post.destroy', $post) }}" method="POST" onsubmit="return confirm('Sei sicuro?');" class="ml-auto">
+                            <div x-show="showComments" x-transition.origin.top class="border-t border-slate-100 bg-slate-50/30">
+                                <div class="px-8 py-4 space-y-3">
+                                    @foreach($post->comments as $comment)
+                                        <div class="flex items-start space-x-3 text-sm group/comment">
+                                            <img src="{{ $comment->user->getAvatarUrl() }}" class="w-6 h-6 rounded-lg object-cover mt-1">
+                                            <div class="bg-white p-3 rounded-2xl shadow-sm border border-slate-100 flex-1 relative">
+                                                <p class="font-bold text-slate-900 text-xs">{{ $comment->user->name }}</p>
+                                                <p class="text-slate-600">{{ $comment->body }}</p>
+                                                
+                                                @auth
+                                                    @if(auth()->id() === $comment->user_id)
+                                                        <form action="{{ route('comments.destroy', $comment) }}" method="POST" class="absolute top-2 right-2 opacity-0 group-hover/comment:opacity-100 transition">
+                                                            @csrf
+                                                            @method('DELETE')
+                                                            <button type="submit" onclick="return confirm('Eliminare il commento?')" class="text-slate-300 hover:text-red-500">
+                                                                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                                                                </svg>
+                                                            </button>
+                                                        </form>
+                                                    @endif
+                                                @endauth
+                                            </div>
+                                        </div>
+                                    @endforeach
+                                </div>
+
+                                @auth
+                                <div class="px-8 py-4 bg-white border-t border-slate-100">
+                                    <form action="{{ route('comments.store', $post) }}" method="POST" class="flex gap-4">
                                         @csrf
-                                        @method('DELETE')
-                                        <button type="submit" class="p-2 text-slate-300 hover:text-red-500 transition-colors group">
-                                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 group-hover:scale-110 transition" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-                                            </svg>
+                                        <input type="text" name="body" placeholder="Scrivi un commento..." required
+                                            class="flex-1 bg-slate-50 border border-slate-200 rounded-xl px-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500/20 transition">
+                                        <button type="submit" class="bg-indigo-600 text-white px-4 py-2 rounded-xl text-xs font-black uppercase tracking-widest hover:bg-indigo-700 transition">
+                                            Invia
                                         </button>
                                     </form>
-                                @endif
-                            @endauth
-                        </div>
-
-                        <div class="px-8 pb-4 space-y-3 bg-slate-50/30">
-                            @foreach($post->comments as $comment)
-                                <div class="flex items-start space-x-3 text-sm">
-                                    <img src="{{ $comment->user->getAvatarUrl() }}" class="w-6 h-6 rounded-lg object-cover mt-1">
-                                    <div class="bg-white p-3 rounded-2xl shadow-sm border border-slate-100 flex-1">
-                                        <p class="font-bold text-slate-900 text-xs">{{ $comment->user->name }}</p>
-                                        <p class="text-slate-600">{{ $comment->body }}</p>
-                                    </div>
                                 </div>
-                            @endforeach
+                                @endauth
+                            </div>
                         </div>
-
-                        @auth
-                        <div class="px-8 py-4 bg-white border-t border-slate-100">
-                            <form action="{{ route('comments.store', $post) }}" method="POST" class="flex gap-4">
-                                @csrf
-                                <input type="text" name="body" placeholder="Scrivi un commento..." 
-                                    class="flex-1 bg-slate-50 border border-slate-200 rounded-xl px-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500/20 transition" required>
-                                <button type="submit" class="bg-indigo-600 text-white px-4 py-2 rounded-xl text-xs font-black uppercase tracking-widest hover:bg-indigo-700 transition">
-                                    Invia
-                                </button>
-                            </form>
-                        </div>
-                        @endauth
                     </div> @empty
                     <div class="text-center py-20 bg-slate-50/50 rounded-[3rem] border border-dashed border-slate-200">
                         <p class="text-slate-400 font-medium italic text-lg">Nessun post ancora... 😶‍🌫️</p>
