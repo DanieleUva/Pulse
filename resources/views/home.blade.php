@@ -233,47 +233,66 @@ FINE SEZIONE MOMENTI
                 </div>
 
                 <!-- Area Commenti -->
-                <div class="bg-slate-50/50 p-6 border-t border-slate-100">
-                    <div class="space-y-4 mb-6">
-                        @foreach($post->comments as $comment)
-                            <div class="flex space-x-3 items-start">
-                                <img src="{{ $comment->user->getAvatarUrl() }}" class="w-8 h-8 rounded-xl object-cover border border-white shadow-sm">
-                                <div class="flex-1 bg-white p-4 rounded-2xl shadow-sm border border-slate-100 relative group/comment">
-                                    <div class="flex justify-between items-center mb-1">
-                                        <span class="text-xs font-black text-indigo-600">@ {{ $comment->user->username }}</span>
-                                        <span class="text-[10px] text-slate-400 font-bold uppercase">{{ $comment->created_at->diffForHumans() }}</span>
-                                    </div>
-                                    <p class="text-sm text-slate-700">{{ $comment->body }}</p>
-
-                                    @auth
-                                        @if(auth()->id() === $comment->user_id)
-                                            <form action="{{ route('comments.destroy', $comment) }}" method="POST" class="absolute -right-2 -top-2 opacity-0 group-hover/comment:opacity-100 transition">
-                                                @csrf @method('DELETE')
-                                                <button type="submit" class="bg-white text-red-500 shadow-md p-1 rounded-full border border-red-50 hover:bg-red-50">
-                                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3" viewBox="0 0 20 20" fill="currentColor">
-                                                        <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd" />
-                                                    </svg>
-                                                </button>
-                                            </form>
-                                        @endif
-                                    @endauth
-                                </div>
-                            </div>
-                        @endforeach
+                <div class="bg-slate-50/50 p-6 border-t border-slate-100" x-data="{ showAll: false }">
+    <div class="space-y-4 mb-6">
+        @foreach($post->comments as $index => $comment)
+            <div class="flex space-x-3 items-start" 
+                 x-show="showAll || {{ $index }} < 2" 
+                 x-transition:enter="transition ease-out duration-200"
+                 x-transition:enter-start="opacity-0 transform -translate-y-2">
+                
+                <img src="{{ $comment->user->getAvatarUrl() }}" class="w-8 h-8 rounded-xl object-cover border border-white shadow-sm">
+                
+                <div class="flex-1 bg-white p-4 rounded-2xl shadow-sm border border-slate-100 relative group/comment">
+                    <div class="flex justify-between items-center mb-1">
+                        <span class="text-xs font-black text-indigo-600">@ {{ $comment->user->username }}</span>
+                        <span class="text-[10px] text-slate-400 font-bold uppercase">{{ $comment->created_at->diffForHumans() }}</span>
                     </div>
+                    <p class="text-sm text-slate-700">{{ $comment->body }}</p>
 
                     @auth
-                        <form action="{{ route('comments.store', $post) }}" method="POST" class="flex items-center space-x-3">
-                            @csrf
-                            <div class="flex-1 relative">
-                                <input type="text" name="body" placeholder="Scrivi un commento..." 
-                                    class="w-full bg-white border border-slate-200 rounded-2xl px-5 py-3 text-sm focus:ring-2 focus:ring-indigo-500 outline-none transition shadow-sm">
-                                <button type="submit" class="absolute right-4 top-1/2 -translate-y-1/2 text-indigo-600 hover:text-indigo-800 font-black text-xs uppercase tracking-widest">
-                                    Invia
+                        @if(auth()->id() === $comment->user_id)
+                            <form action="{{ route('comments.destroy', $comment) }}" method="POST" class="absolute -right-2 -top-2 opacity-0 group-hover/comment:opacity-100 transition">
+                                @csrf @method('DELETE')
+                                <button type="submit" class="bg-white text-red-500 shadow-md p-1 rounded-full border border-red-50 hover:bg-red-50">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3" viewBox="0 0 20 20" fill="currentColor">
+                                        <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd" />
+                                    </svg>
                                 </button>
-                            </div>
-                        </form>
+                            </form>
+                        @endif
                     @endauth
+                </div>
+            </div>
+        @endforeach
+    </div>
+
+    {{-- Tasto per caricare gli altri commenti --}}
+    @if($post->comments->count() > 2)
+        <div class="mb-6 pl-11">
+            <button @click="showAll = !showAll" 
+                    class="text-xs font-bold text-slate-400 hover:text-indigo-600 transition flex items-center space-x-1">
+                <span x-text="showAll ? 'Nascondi commenti' : 'Mostra tutti i {{ $post->comments->count() }} commenti'"></span>
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3 transition-transform duration-200" :class="showAll ? 'rotate-180' : ''" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M19 9l-7 7-7-7" />
+                </svg>
+            </button>
+        </div>
+    @endif
+
+    @auth
+        <form action="{{ route('comments.store', $post) }}" method="POST" class="flex items-center space-x-3">
+            @csrf
+            <div class="flex-1 relative">
+                <input type="text" name="body" placeholder="Scrivi un commento..." 
+                    class="w-full bg-white border border-slate-200 rounded-2xl px-5 py-3 text-sm focus:ring-2 focus:ring-indigo-500 outline-none transition shadow-sm">
+                <button type="submit" class="absolute right-4 top-1/2 -translate-y-1/2 text-indigo-600 hover:text-indigo-800 font-black text-xs uppercase tracking-widest">
+                    Invia
+                </button>
+            </div>
+        </form>
+    @endauth
+</div>
                 </div>
             </div>
         @endforeach
