@@ -9,12 +9,21 @@ use Illuminate\Support\Facades\Storage; // Serve per gestire i file
 
 class PostController extends Controller
 {
-    public function index()
-    {
-        // Carichiamo anche i commenti per evitare errori nella home
-        $posts = Post::with(['user', 'likes', 'comments'])->latest()->get();
-        return view('home', compact('posts'));
-    }
+ public function index()
+{
+    // 1. Carichiamo i post con le relazioni necessarie
+    $posts = Post::with(['user', 'likes', 'comments.user'])->latest()->get();
+
+    // 2. Carichiamo i momenti (storie) attivi delle ultime 24 ore
+    // Usiamo lo scopeActive che abbiamo creato nel model Moment
+    $moments = \App\Models\Moment::active()
+                ->with('user')
+                ->latest()
+                ->get();
+
+    // 3. Passiamo ENTRAMBE le variabili alla vista
+    return view('home', compact('posts', 'moments'));
+}
 
     public function store(Request $request)
     {

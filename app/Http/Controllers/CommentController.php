@@ -2,8 +2,9 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Post;
 use App\Models\Comment; // <-- Fondamentale: aggiungi questa riga!
+use App\Models\Post;
+use id;
 use Illuminate\Http\Request;
 
 class CommentController extends Controller

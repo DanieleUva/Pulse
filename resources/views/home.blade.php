@@ -1,16 +1,26 @@
-<!DOCTYPE html>
-<html lang="it">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Pulse | Home</title>
+    
     <script src="https://cdn.tailwindcss.com"></script>
+    <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
+
     <link rel="stylesheet" href="{{ asset('css/style.css') }}">
+
     <style>
         body {
-            /* Un gradiente morbido che toglie l'effetto "ospedale" del bianco puro */
             background: radial-gradient(circle at top right, #eef2ff 0%, #f1f5f9 50%, #f8fafc 100%);
             background-attachment: fixed;
+        }
+        
+        @keyframes progress {
+            from { width: 0%; }
+            to { width: 100%; }
+        }
+
+        .animate-progress {
+            animation: progress 5s linear forwards;
         }
     </style>
 </head>
@@ -85,7 +95,63 @@
             <h3 class="text-xs font-black text-slate-400 uppercase tracking-[0.2em]">Feed Recente</h3>
             <div class="h-[1px] flex-1 bg-slate-200"></div>
         </div>
+
+        SEZIONE MOMENTI
         
+        <div x-data="{ open: false, activeImage: '' }" class="flex space-x-4 overflow-x-auto pb-6 mb-8 no-scrollbar">
+    <div class="flex-shrink-0 flex flex-col items-center">
+        <form action="{{ route('moments.store') }}" method="POST" enctype="multipart/form-data" id="moment-form">
+            @csrf
+            <input type="file" name="image" id="moment-input" class="hidden" onchange="document.getElementById('moment-form').submit()">
+            <div onclick="document.getElementById('moment-input').click()" 
+                 class="w-16 h-16 rounded-full border-2 border-dashed border-slate-300 flex items-center justify-center cursor-pointer hover:border-indigo-500 transition group">
+                 <span class="text-slate-400 group-hover:text-indigo-500 font-bold text-2xl">+</span>
+            </div>
+        </form>
+        <span class="text-[10px] font-bold mt-2 text-slate-500">Tu</span>
+    </div>
+
+    @foreach($moments as $moment)
+        <div class="flex-shrink-0 flex flex-col items-center cursor-pointer" 
+             @click="activeImage = '{{ asset('storage/' . $moment->image_path) }}'; open = true">
+            <div class="p-1 rounded-full bg-gradient-to-tr from-indigo-500 via-purple-500 to-pink-500 hover:scale-105 transition">
+                <div class="bg-white p-0.5 rounded-full">
+                    <img src="{{ $moment->user->getAvatarUrl() }}" class="w-14 h-14 rounded-full object-cover border-2 border-white">
+                </div>
+            </div>
+            <span class="text-[10px] font-bold mt-2 text-slate-800">{{ $moment->user->username }}</span>
+        </div>
+    @endforeach
+
+    <div x-show="open" 
+         x-transition:enter="transition ease-out duration-300"
+         x-transition:enter-start="opacity-0 scale-90"
+         x-transition:enter-end="opacity-100 scale-100"
+         x-show="open" 
+         class="fixed inset-0 z-[999] flex items-center justify-center bg-black/90 p-4" 
+         @keydown.escape.window="open = false" 
+         style="display: none;">
+        
+        <button @click="open = false" class="absolute top-6 right-6 text-white hover:text-slate-300">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-10 w-10" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+            </svg>
+        </button>
+
+        <div class="max-w-md w-full aspect-[9/16] relative">
+            <img :src="activeImage" class="w-full h-full object-cover rounded-3xl shadow-2xl border border-white/10">
+            
+            <div class="absolute top-4 left-4 right-4 flex space-x-1">
+                <div class="h-1 flex-1 bg-white/40 rounded-full overflow-hidden">
+                    <div class="h-full bg-white w-full"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+FINE SEZIONE MOMENTI
+
         @foreach ($posts as $post)
             <div class="bg-white rounded-[2rem] shadow-[0_10px_30px_rgba(0,0,0,0.02)] mb-8 border border-slate-100 overflow-hidden transition-all duration-300 hover:shadow-xl hover:shadow-indigo-500/5">
                 

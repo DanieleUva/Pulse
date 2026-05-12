@@ -9,6 +9,7 @@ use App\Http\Controllers\CommentController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\SearchController;
 use App\Http\Controllers\ChatController;
+use App\Http\Controllers\MomentController;
 
 // 1. La Home: deve recuperare i post come facevamo prima
 Route::get('/', [PostController::class, 'index'])->name('home');
@@ -64,4 +65,6 @@ Route::get('/users/{user:username}/followers', [UserController::class, 'follower
 Route::get('/users/{user:username}/following', [UserController::class, 'following'])->name('users.following');
 
 Route::get('/post/{post}', [PostController::class, 'show'])->name('post.show');
+
+Route::post('/moments', [MomentController::class, 'store'])->name('moments.store');
 
