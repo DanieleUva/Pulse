@@ -98,52 +98,91 @@
 
         SEZIONE MOMENTI
         
-        <div x-data="{ open: false, activeImage: '' }" class="flex space-x-4 overflow-x-auto pb-6 mb-8 no-scrollbar">
-    <div class="flex-shrink-0 flex flex-col items-center">
-        <form action="{{ route('moments.store') }}" method="POST" enctype="multipart/form-data" id="moment-form">
-            @csrf
-            <input type="file" name="image" id="moment-input" class="hidden" onchange="document.getElementById('moment-form').submit()">
-            <div onclick="document.getElementById('moment-input').click()" 
-                 class="w-16 h-16 rounded-full border-2 border-dashed border-slate-300 flex items-center justify-center cursor-pointer hover:border-indigo-500 transition group">
-                 <span class="text-slate-400 group-hover:text-indigo-500 font-bold text-2xl">+</span>
-            </div>
-        </form>
-        <span class="text-[10px] font-bold mt-2 text-slate-500">Tu</span>
+       <div x-data="{ open: false, activeImage: '', activeUser: '' }" class="mb-10">
+    
+    <!-- Titolo Sezione (Opzionale, molto pulito) -->
+    <div class="flex items-center justify-between mb-4 px-2">
+        <h3 class="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400">Momenti Recenti</h3>
     </div>
 
-    @foreach($moments as $moment)
-        <div class="flex-shrink-0 flex flex-col items-center cursor-pointer" 
-             @click="activeImage = '{{ asset('storage/' . $moment->image_path) }}'; open = true">
-            <div class="p-1 rounded-full bg-gradient-to-tr from-indigo-500 via-purple-500 to-pink-500 hover:scale-105 transition">
-                <div class="bg-white p-0.5 rounded-full">
-                    <img src="{{ $moment->user->getAvatarUrl() }}" class="w-14 h-14 rounded-full object-cover border-2 border-white">
+    <!-- Container Scorrevole -->
+    <div class="flex space-x-5 overflow-x-auto pb-4 no-scrollbar items-start">
+        
+        <!-- TASTO AGGIUNGI (TU) -->
+        <div class="flex-shrink-0 flex flex-col items-center group">
+            <form action="{{ route('moments.store') }}" method="POST" enctype="multipart/form-data" id="moment-form">
+                @csrf
+                <input type="file" name="image" id="moment-input" class="hidden" onchange="document.getElementById('moment-form').submit()">
+                
+                <div onclick="document.getElementById('moment-input').click()" 
+                     class="relative w-20 h-20 rounded-[2.5rem] bg-slate-100 flex items-center justify-center cursor-pointer border-2 border-dashed border-slate-300 group-hover:border-indigo-500 group-hover:bg-indigo-50/50 transition-all duration-300 overflow-hidden shadow-sm">
+                    
+                    <!-- Anteprima del tuo avatar sfuocata sullo sfondo (molto pro) -->
+                    <img src="{{ auth()->user()->getAvatarUrl() }}" class="absolute inset-0 w-full h-full object-cover opacity-20 blur-[2px]">
+                    
+                    <!-- Plus Icon -->
+                    <div class="relative z-10 w-8 h-8 bg-white rounded-2xl shadow-md flex items-center justify-center text-indigo-600 group-hover:scale-110 transition">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M12 4v16m8-8H4" />
+                        </svg>
+                    </div>
                 </div>
-            </div>
-            <span class="text-[10px] font-bold mt-2 text-slate-800">{{ $moment->user->username }}</span>
+            </form>
+            <span class="text-[10px] font-black mt-3 text-slate-400 uppercase tracking-wider">Aggiungi</span>
         </div>
-    @endforeach
 
+        <!-- LISTA MOMENTI ALTRI UTENTI -->
+        @foreach($moments as $moment)
+            <div class="flex-shrink-0 flex flex-col items-center cursor-pointer group" 
+                 @click="activeImage = '{{ asset('storage/' . $moment->image_path) }}'; activeUser = '{{ $moment->user->username }}'; open = true">
+                
+                <!-- Ring Gradiente -->
+                <div class="p-[3px] rounded-[2.6rem] bg-gradient-to-tr from-indigo-500 via-purple-500 to-pink-500 group-hover:rotate-12 transition-all duration-500 shadow-lg shadow-indigo-100">
+                    <div class="bg-white p-1 rounded-[2.4rem]">
+                        <img src="{{ $moment->user->getAvatarUrl() }}" 
+                             class="w-16 h-16 rounded-[2.2rem] object-cover border-2 border-white group-hover:scale-105 transition duration-300">
+                    </div>
+                </div>
+                
+                <span class="text-[10px] font-black mt-3 text-slate-700 uppercase tracking-tighter">{{ $moment->user->username }}</span>
+            </div>
+        @endforeach
+    </div>
+
+    <!-- MODALE FULLSCREEN (Stile Storie) -->
     <div x-show="open" 
          x-transition:enter="transition ease-out duration-300"
-         x-transition:enter-start="opacity-0 scale-90"
+         x-transition:enter-start="opacity-0 scale-110"
          x-transition:enter-end="opacity-100 scale-100"
-         x-show="open" 
-         class="fixed inset-0 z-[999] flex items-center justify-center bg-black/90 p-4" 
+         class="fixed inset-0 z-[999] flex items-center justify-center bg-slate-900/95 backdrop-blur-xl p-0 md:p-4" 
          @keydown.escape.window="open = false" 
          style="display: none;">
         
-        <button @click="open = false" class="absolute top-6 right-6 text-white hover:text-slate-300">
-            <svg xmlns="http://www.w3.org/2000/svg" class="h-10 w-10" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <!-- Chiudi -->
+        <button @click="open = false" class="absolute top-8 right-8 z-50 text-white/50 hover:text-white transition">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
             </svg>
         </button>
 
-        <div class="max-w-md w-full aspect-[9/16] relative">
-            <img :src="activeImage" class="w-full h-full object-cover rounded-3xl shadow-2xl border border-white/10">
+        <div class="max-w-[450px] w-full h-full md:h-[85vh] relative bg-black md:rounded-[3rem] overflow-hidden shadow-[0_0_80px_rgba(0,0,0,0.5)]">
+            <!-- Immagine Storia -->
+            <img :src="activeImage" class="w-full h-full object-cover">
             
-            <div class="absolute top-4 left-4 right-4 flex space-x-1">
-                <div class="h-1 flex-1 bg-white/40 rounded-full overflow-hidden">
-                    <div class="h-full bg-white w-full"></div>
+            <!-- Overlay Info Utente -->
+            <div class="absolute top-0 left-0 right-0 p-6 bg-gradient-to-b from-black/60 to-transparent">
+                <div class="flex items-center space-x-3">
+                    <div class="w-10 h-10 rounded-full border-2 border-white/20 overflow-hidden">
+                         <img :src="activeImage" class="w-full h-full object-cover blur-sm"> <!-- Placeholder o avatar -->
+                    </div>
+                    <span class="text-white font-bold text-sm tracking-tight" x-text="activeUser"></span>
+                </div>
+                
+                <!-- Barra Progresso -->
+                <div class="flex space-x-1 mt-4">
+                    <div class="h-1 flex-1 bg-white/30 rounded-full overflow-hidden">
+                        <div class="h-full bg-white w-full animate-progress"></div>
+                    </div>
                 </div>
             </div>
         </div>

@@ -85,4 +85,11 @@ class User extends Authenticatable
         return $this->hasMany(Message::class, 'receiver_id');
     }
 
+    public function getCoverUrl()
+    {
+        return $this->cover_image 
+            ? asset('storage/' . $this->cover_image) 
+            : 'https://images.unsplash.com/photo-1557683316-973673baf926?q=80&w=1000'; // Un gradiente viola/blu di default
+    }
+
 }
