@@ -10,9 +10,13 @@
 
     <style>
         body {
-            background: radial-gradient(circle at top right, #eef2ff 0%, #f1f5f9 50%, #f8fafc 100%);
-            background-attachment: fixed;
-        }
+    background: radial-gradient(circle at top right, #eef2ff 0%, #f1f5f9 50%, #f8fafc 100%);
+    background-attachment: fixed;
+    margin: 0;
+    padding: 0;
+    /* Questo assicura che se la pagina è corta, il fondo sia nero come il footer */
+    background-color: #0B1120; 
+}
         
         @keyframes progress {
             from { width: 0%; }
@@ -28,7 +32,7 @@
 
     <x-navbar />
 
-    <div class="max-w-2xl mx-auto mt-10 px-4 pb-20">
+    <div class="max-w-2xl mx-auto mt-10 px-4">
         
         <!-- Header con Titolo Moderno -->
         <div class="text-center mb-10">
@@ -334,6 +338,8 @@ FINE SEZIONE MOMENTI
         </div>
     </div>
 @endforeach
+
+<x-footer />
 
 </body>
 </html>
