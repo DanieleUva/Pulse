@@ -12,7 +12,7 @@ use App\Http\Controllers\ChatController;
 use App\Http\Controllers\MomentController;
 
 // 1. La Home: deve recuperare i post come facevamo prima
-Route::get('/', [PostController::class, 'index'])->name('home');
+Route::get('/', [PostController::class, 'index'])->middleware('auth')->name('home');
 
 // 2. La rotta per salvare i post (AGGIUNTO IL NOME)
 Route::post('/post', [PostController::class, 'store'])->name('post.store');
@@ -67,4 +67,5 @@ Route::get('/users/{user:username}/following', [UserController::class, 'followin
 Route::get('/post/{post}', [PostController::class, 'show'])->name('post.show');
 
 Route::post('/moments', [MomentController::class, 'store'])->name('moments.store');
+
 
