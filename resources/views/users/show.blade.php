@@ -164,7 +164,7 @@
 
             <div class="space-y-8">
                 @forelse($user->posts as $post)
-                    <div class="bg-white/80 backdrop-blur-md rounded-[2.5rem] shadow-sm border border-white overflow-hidden transition-all hover:shadow-md">
+                <div id="post-{{ $post->id }}" class="bg-white/80 backdrop-blur-md rounded-[2.5rem] shadow-sm border border-white overflow-hidden transition-all hover:shadow-md">
                         <div class="p-8">
                             <p class="text-slate-700 text-lg leading-relaxed">{{ $post->body }}</p>
                             @if($post->image)

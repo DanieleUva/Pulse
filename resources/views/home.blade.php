@@ -196,7 +196,8 @@
 FINE SEZIONE MOMENTI
 
         @foreach ($posts as $post)
-    <div class="bg-white rounded-[2.5rem] shadow-[0_20px_50px_rgba(0,0,0,0.04)] mb-10 border border-slate-100 overflow-hidden transition-all duration-500 hover:shadow-indigo-500/10 group/post">
+    <!-- Modifica la riga 199 così: -->
+<div id="post-{{ $post->id }}" class="bg-white rounded-[2.5rem] shadow-[0_20px_50px_rgba(0,0,0,0.04)] mb-10 border border-slate-100 overflow-hidden transition-all duration-500 hover:shadow-indigo-500/10 group">
         
         <!-- Header Post -->
         <div class="p-8 flex items-center justify-between">

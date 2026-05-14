@@ -34,11 +34,11 @@ if ($post->user_id !== auth()->id()) {
     ]);
 }
 
-    return back()->with('success', 'Commento pubblicato!');
+   return redirect()->to(url()->previous() . '#post-' . $post->id)->with('success', 'Commento pubblicato!');
 }
    public function destroy(Comment $comment) {
     if(auth()->id() !== $comment->user_id) abort(403);
     $comment->delete();
-    return back();
+    return redirect()->to(url()->previous() . '#post-' . $comment->post_id);
 }
 }

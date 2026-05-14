@@ -31,6 +31,6 @@ class LikeController extends Controller
             // --------------------------
         }
 
-        return back();
+      return redirect()->to(url()->previous() . '#post-' . $post->id);
     }
 }
