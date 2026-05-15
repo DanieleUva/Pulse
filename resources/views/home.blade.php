@@ -32,8 +32,7 @@
 
     <x-navbar />
 
-    <div class="max-w-2xl mx-auto mt-10 px-4">
-        
+<main class="flex-grow"> <div class="max-w-4xl mx-auto mt-10 px-4 pb-20">      
         <!-- Header con Titolo Moderno -->
         <div class="text-center mb-10">
             <h1 class="text-4xl font-black tracking-tight text-slate-800">
@@ -42,7 +41,7 @@
             <p class="text-slate-500 mt-2 font-medium">Condividi le tue idee con il mondo.</p>
         </div>
 
-        <!-- Box Creazione Post -->
+        
        <!-- Box Creazione Post -->
         @auth
         <div class="bg-white/80 backdrop-blur-md p-6 rounded-[2.5rem] shadow-[0_20px_50px_rgba(0,0,0,0.05)] mb-10 border border-white">
@@ -340,7 +339,7 @@ FINE SEZIONE MOMENTI
     </div>
 @endforeach
 
-<x-footer />
+</div> </main> <x-footer />
 
 </body>
 </html>
