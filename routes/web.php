@@ -15,7 +15,7 @@ use App\Http\Controllers\MomentController;
 Route::get('/', [PostController::class, 'index'])->middleware('auth')->name('home');
 
 // 2. La rotta per salvare i post (AGGIUNTO IL NOME)
-Route::post('/post', [PostController::class, 'store'])->name('post.store');
+Route::post('/post', [PostController::class, 'store'])->middleware(['auth', 'throttle:10,1'])->name('post.store');
 
 // 3. Le rotte di Breeze (Dashboard e Profilo)
 Route::get('/dashboard', function () {
@@ -34,7 +34,7 @@ Route::delete('/post/{post}', [PostController::class, 'destroy'])->middleware('a
 
 Route::post('/post/{post}/like', [LikeController::class, 'store'])->middleware('auth')->name('post.like');
 
-Route::post('/posts/{post}/comments', [CommentController::class, 'store'])->name('comments.store');
+Route::post('/posts/{post}/comments', [CommentController::class, 'store'])->middleware(['auth', 'throttle:10,1'])->name('comments.store');
 
 Route::delete('/comments/{comment}', [CommentController::class, 'destroy'])->name('comments.destroy');
 
@@ -66,6 +66,6 @@ Route::get('/users/{user:username}/following', [UserController::class, 'followin
 
 Route::get('/post/{post}', [PostController::class, 'show'])->name('post.show');
 
-Route::post('/moments', [MomentController::class, 'store'])->name('moments.store');
+Route::post('/moments', [MomentController::class, 'store'])->middleware(['auth', 'throttle:10,1'])->name('moments.store');
 
 

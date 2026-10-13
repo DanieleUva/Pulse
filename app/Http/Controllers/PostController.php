@@ -11,7 +11,7 @@ class PostController extends Controller
 {
  public function index()
 {
-    $posts = Post::with(['user', 'likes', 'comments.user'])->latest()->get();
+    $posts = Post::with(['user', 'likes', 'comments.user'])->latest()->paginate(10);
     
     // Incrementiamo le views di tutti i post visualizzati in questa sessione
     
