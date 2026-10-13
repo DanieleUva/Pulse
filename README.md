@@ -56,6 +56,7 @@ Progetto personale realizzato a scopo di studio e portfolio.
 - Rate limiting sulla pubblicazione di post e commenti (10 richieste al minuto).
 - Header di sicurezza HTTP tramite un middleware dedicato (`SecurityHeaders`): `X-Frame-Options`, `X-Content-Type-Options` e una Content-Security-Policy di base.
 - Protezione CSRF di Laravel, escaping dell'output con Blade, query tramite Eloquent (parametri legati) e `$fillable` contro il mass assignment.
+- Scansione con OWASP ZAP.
 
 ## Scelte tecniche
 
@@ -110,10 +111,6 @@ L'applicazione sarà disponibile su `http://localhost:8000`.
 - Content-Security-Policy più restrittiva (senza `'unsafe-inline'`)
 - Test automatici sulle funzionalità principali
 - Ambiente Docker (Laravel Sail) e pubblicazione online con demo
-
-## Sicurezza 
-
-Scansione con OWASP ZAP.
 
 ## Autore
 
