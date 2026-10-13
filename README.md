@@ -17,13 +17,13 @@ Progetto personale realizzato a scopo di studio e portfolio.
 
 | Home | Post e commenti |
 |---|---|
-| ![Home con feed e momenti](docs/screenshots/home.png) | ![Post con like e commenti](docs/screenshots/commenti.png) |
+| ![Home con feed e momenti](screenshots/home.png) | ![Post con like e commenti](screenshots/commenti.png) |
 | **Profilo** | **Esplora persone** |
-| ![Profilo utente](docs/screenshots/profilo.png) | ![Esplora e ricerca persone](docs/screenshots/esplora.png) |
+| ![Profilo utente](screenshots/profilo.png) | ![Esplora e ricerca persone](screenshots/esplora.png) |
 | **Chat privata** | **Notifiche** |
-| ![Chat privata tra utenti](docs/screenshots/chat.png) | ![Notifiche](docs/screenshots/notifiche.png) |
+| ![Chat privata tra utenti](screenshots/chat.png) | ![Notifiche](screenshots/notifiche.png) |
 | **Accesso** | **Registrazione** |
-| ![Pagina di accesso](docs/screenshots/login.png) | ![Pagina di registrazione](docs/screenshots/registrazione.png) |
+| ![Pagina di accesso](screenshots/login.png) | ![Pagina di registrazione](screenshots/registrazione.png) |
 
 ## Funzionalità
 
